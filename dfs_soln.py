@@ -14,7 +14,15 @@ def dfs():
     stack.push(((board[0], 0), board.getState().copy())) # push onto the stack the queen's row,col position and the board state
     hasPopped = False
     moves = 1
-    while(not(board.testBoard())): # while the board is not a solution and the stack isn't empty
+    iter = 0
+    prev_soln = []
+    while(iter < 2): # while the board is not a solution and the stack isn't empty
+        if(board.testBoard() and prev_soln != board.getState()):
+            board.printBoard()
+            prev_soln = board.getState().copy()
+            stack.pop()
+            hasPopped = True
+            iter += 1
         prev_config = stack.peek() # get the previous state of the board
         prev_col = prev_config[0][1]
         prev_state = prev_config[1]
@@ -22,11 +30,8 @@ def dfs():
 
         new_col = prev_col + 1 # change the position of the queen in the next column
         if(new_col == 8):
-            if(board.testBoard()):
-                break
-            else:
-                stack.pop()
-                continue
+            stack.pop()
+            continue
         while(hasPopped or (not(board.testBoardFrom(new_col)) and board[new_col] < 8)): # find the row where the queen is not being attacked by any other queens
             board[new_col] +=1
             hasPopped = False
@@ -37,9 +42,8 @@ def dfs():
         elif(board[new_col] == 8): # if there was no position such that the queen would create a state with a valid solution, pop the state from the stack
             stack.pop()
             hasPopped = True
-    assert(board.testBoard())
-    print("Boards Generated: " + str(moves))
-    board.printBoard() # print the board
+    #print("Boards Generated: " + str(moves))
+    #board.printBoard() # print the board
 
 if __name__ == '__main__':
     dfs()
